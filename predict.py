@@ -57,12 +57,12 @@ all_data.describe()
 ### Get RMSE metric from y_test and y_pred
 np.sqrt(mean_squared_error(y_test,y_pred))
 ### Predict house prices
-meters = 51.22
+meters = 52.22
 room = 3
-dist = 2
-floor = 3
+dist = 1
+floor = 4
 
-x = [[51.22,3,dist,3]]
+x = [[meters,room,dist,floor]]
 pred = model.predict(x)
 print(districts[dist],np.round(pred[0],0), 'zł')
 
