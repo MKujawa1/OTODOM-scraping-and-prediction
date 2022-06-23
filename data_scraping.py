@@ -16,7 +16,8 @@ user_agents = user_agent_rotator.get_user_agents()
 ### Get user agent
 all_data = pd.DataFrame({'cost':[],'meters': [],'rooms': [],'dist': []})
 ### Start scraping
-for page in range(1,2):
+pages = 101
+for page in range(1,pages):
     ### Get random time and user agent
     time.sleep(random.uniform(0.1, 0.6))
     user_agent = user_agent_rotator.get_random_user_agent()
