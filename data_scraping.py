@@ -17,7 +17,7 @@ user_agents = user_agent_rotator.get_user_agents()
 all_data = pd.DataFrame({'cost':[],'meters': [],'rooms': [],'dist': []})
 ### Start scraping
 pages = 101
-for page in range(1,pages):
+for page in range(1,pages+1):
     ### Get random time and user agent
     time.sleep(random.uniform(0.1, 0.6))
     user_agent = user_agent_rotator.get_random_user_agent()
@@ -49,37 +49,43 @@ for page in range(1,pages):
             ### Get data about floor
             time.sleep(random.uniform(0.1, 0.4))
             full_link = 'https://www.otodom.pl'+apart[i].find('a')['href']
-            floor = requests.get(full_link,{'User-Agent':user_agent})
-            floor = BeautifulSoup(floor.content,'html.parser')
-            floor = floor.find('div', class_ = 'css-wj4wb2 emxfhao1')
-            floor = floor.find_all('div',class_='css-1ccovha estckra9')
-            bool_data = [i['aria-label']=='Piętro' for i in floor]
-            floor_data = floor[np.argmax(bool_data)].find('div', class_='css-1wi2w6s estckra5').get_text().split('/')[0]
-            if floor_data == 'parter':
-                ### Convert floor to 0
-                floor_data = 0
-                ### Convert cost data to int
-                c = int(c.replace('zł','').replace('\xa0','').replace(',','.'))
-                ### Append data
-                room.append(r)
-                meter.append(m)
-                cost.append(c)
-                dist.append(d)
-                floors.append(floor_data)
-            else:
-                try:
-                    ### Convert floor to int
-                    floor_data = int(floor_data)
-                    ### Convert cost data to int
-                    c = int(c.replace('zł','').replace('\xa0','').replace(',','.'))
-                    ### Append data
-                    room.append(r)
-                    meter.append(m)
-                    cost.append(c)
-                    dist.append(d)
-                    floors.append(floor_data)
-                except:
-                    pass
+            try:
+                floor = requests.get(full_link,{'User-Agent':user_agent})
+                floor = BeautifulSoup(floor.content,'html.parser')
+                floor = floor.find('div', class_ = 'css-wj4wb2 emxfhao1')
+                floor = floor.find_all('div',class_='css-1ccovha estckra9')
+                bool_data = [i['aria-label']=='Piętro' for i in floor]
+                floor_data = floor[np.argmax(bool_data)].find('div', class_='css-1wi2w6s estckra5').get_text().split('/')[0]
+                if floor_data == 'parter':
+                    try:
+                        ### Convert floor to 0
+                        floor_data = 0
+                        ### Convert cost data to int
+                        c = int(c.replace('zł','').replace('\xa0','').replace(',','.'))
+                        ### Append data
+                        room.append(r)
+                        meter.append(m)
+                        cost.append(c)
+                        dist.append(d)
+                        floors.append(floor_data)
+                    except:
+                        pass
+                else:
+                    try:
+                        ### Convert floor to int
+                        floor_data = int(floor_data)
+                        ### Convert cost data to int
+                        c = int(c.replace('zł','').replace('\xa0','').replace(',','.'))
+                        ### Append data
+                        room.append(r)
+                        meter.append(m)
+                        cost.append(c)
+                        dist.append(d)
+                        floors.append(floor_data)
+                    except:
+                        pass
+            except:
+                pass
     ### Append data to DataFrame
     all_data = all_data.append(pd.DataFrame({'cost':cost,'meters': meter,'rooms': room,'dist': dist,'floor':floors}),ignore_index = True)
     ### Print current page
